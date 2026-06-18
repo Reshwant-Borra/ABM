@@ -9,10 +9,9 @@ import HAL.Util;
 class Cells extends AgentSQ2Dunstackable<FirstExample>{
 
     int color;
-    int randomColor;
-    public void init() {
+    /* public void init() {
         this.color = Util.RGB(G.rng.Double(), G.rng.Double(), G.rng.Double());
-    }
+    } */
 
     public void StepCell (double divprob, double dieprob){
         if (G.rng.Double() < dieprob){
@@ -75,8 +74,9 @@ public class FirstExample extends AgentGrid2D <Cells> {
     public void DrawModel(GridWindow win) {
         for(int i = 0; i < length; i++) {
             int color = Util.BLACK;
+            Cells cell = GetAgent(i);
             if (GetAgent(i) != null ){
-                color = Util.RGB(rng.Double(), rng.Double(), rng.Double());
+                color = cell.color;
             }
             win.SetPix(i, color);
         }

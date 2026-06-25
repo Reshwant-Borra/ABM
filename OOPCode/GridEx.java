@@ -36,7 +36,7 @@ class Cells extends AgentSQ2Dunstackable<GridEx> {
         if (rng.Double() < MUTATION) {
             mutationCheck = true;
         }
-        if (rng.Double() < this.dieProb){
+        if (rng.Double() < this.dieProb && G.Pop() > 5){
             G.cellDeath++;
             Dispose();
         }
@@ -201,7 +201,7 @@ public class GridEx extends AgentGrid2D<Cells> {
         win.AddCol(1, idCount);
 
         Cells firstCell = model.NewAgentSQ(model.xDim / 2, model.yDim / 2);
-        firstCell.init(0.65, 0.5, 0.1, Util.RGB(1.0, 1.0, 1.0));
+        firstCell.init(0.65, 0.5, 0.15, Util.RGB(1.0, 1.0, 1.0));
         PlotLine popLine = popCells.AddLine(Util.RED);
         PlotLine deathAverage = deathPlot.AddLine(Util.BLUE);
         PlotLine divisionAverage = deathPlot.AddLine(Util.GREEN);
@@ -243,8 +243,8 @@ public class GridEx extends AgentGrid2D<Cells> {
         ArrayList<Integer> divChange = new ArrayList<>();
         ArrayList<Integer> dieChange = new ArrayList<>();
         //Plot 2 Run
-        divChange = runModel(0.45, 0.1);
-        dieChange = runModel(0.5, 0.15);
+        divChange = runModel(0.40, 0.1);
+        dieChange = runModel(0.5, 0.2);
         for(int i = 0; i < divChange.size(); i++) {
             int j = i * 10;
             growthTrj1.Write(baseline.get(i) + "," + dieChange.get(i) + "," + divChange.get(i) + "," + j +"\n");
@@ -252,13 +252,40 @@ public class GridEx extends AgentGrid2D<Cells> {
         growthTrj1.Close();
         divChange.clear();
         dieChange.clear();
-        divChange = runModel(0.55, 0.1);
+        divChange = runModel(0.6, 0.1);
         dieChange = runModel(0.5, 0.05);
         for(int i = 0; i < divChange.size(); i++) {
             int j = i * 10;
             growthTrj2.Write(baseline.get(i) + "," + dieChange.get(i) + "," + divChange.get(i) + "," + j +"\n");
         }
         growthTrj2.Close();
+        divChange.clear();
+        dieChange.clear();
+
+        //Plot 3 Run
+
+        ArrayList<Integer> divChangeVariance = new ArrayList<>();
+        ArrayList<Integer> dieChangeVariance = new ArrayList<>();
+        ArrayList<Integer> baseline3 = new ArrayList<>();
+        ArrayList<Integer> baselineResults = new ArrayList<>();
+        for (int i = 0; i < 20; i++){
+            double j = i * 0.01;
+            double g = 0.5 - j;
+            double f = 0.1 + j;
+            divChange = runModel(g, 0.1);
+            divChangeVariance.add(divChange.get(divChange.size()-1));
+            divChange.clear();
+            dieChange = runModel(0.5, f);
+            dieChangeVariance.add(dieChange.get(dieChange.size()-1));
+            dieChange.clear();
+            baseline3 = runModel(0.5, 0.1);
+            baselineResults.add(baseline3.get(baseline3.size()-1));
+            sensitivityAnalysis.Write(baselineResults.get(i) + "," +  dieChangeVariance.get(i) + "," + divChangeVariance.get(i) + "," + j + "\n");
+        }
+        sensitivityAnalysis.Close();
+
+
+
 
     }
 }
